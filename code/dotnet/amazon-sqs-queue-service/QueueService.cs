@@ -1,22 +1,24 @@
+using Amazon;
 using Amazon.SecurityToken;
 using Amazon.SecurityToken.Model;
+using Amazon.SQS;
 using Amazon.SQS.Model;
 using System.Text.Json;
 
-namespace Amazon.SQS.Demo
+namespace om.messaging.queue.aws
 {
-    public class QueueService
+    public class AmazonSQSQueueService : IQueueService
     {
         private AmazonSQSClient client;
         private AmazonSecurityTokenServiceClient stsClient;
 
-        public QueueService()
+        public AmazonSQSQueueService()
         {
             client = new AmazonSQSClient(RegionEndpoint.EUWest1);
             stsClient = new AmazonSecurityTokenServiceClient();
         }
 
-        public async Task<List<Message>> GetNextMessage(string queueURL, int maxNumberOfMessages=1)
+        public async Task<List<QueueMessage>> GetNextMessageBatch(string queueURL, int maxNumberOfMessages=1)
         {
             var request = new ReceiveMessageRequest
             {
@@ -34,7 +36,7 @@ namespace Amazon.SQS.Demo
                 //foreach (var message in response.Messages) PrintMessageDetails(message);
             }
             else Console.WriteLine("No messages received.");
-            return response.Messages;
+            return response.Messages.Select(m=>QueueMessageAdapter.ToQueueMessage(m)).ToList();
         }
 
         public async Task PutMessage(string queueURL, object message)
@@ -56,7 +58,7 @@ namespace Amazon.SQS.Demo
             }
         }
 
-        public async Task<string> GetQueueURL(string queueName)
+        public async Task<string> GetQueueID(string queueName)
         {
             var getCallerIdentityResponse = await stsClient.GetCallerIdentityAsync(new GetCallerIdentityRequest());
             var accountID = getCallerIdentityResponse.Account;

@@ -1,13 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>om.messaging.queue.aws</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0"/>
+    <PackageReference Include="AWSSDK.Core" Version="3.7.100.10"/>
+    <PackageReference Include="AWSSDK.SQS" Version="3.7.100.10"/>
+    <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.100.10"/>
     <ProjectReference Include="..\queue-service\queue-service.csproj"/>
-    <ProjectReference Include="..\amazon-sqs-queue-service\amazon-sqs-queue-service.csproj"/>
   </ItemGroup>
 </Project>
